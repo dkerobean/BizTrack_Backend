@@ -20,12 +20,12 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     verificationCode: {
-      type: String,
+      type: Number,
       required: true,
     },
     role: {
       type: String,
-      enum: ["admin", "user", "staff"], 
+      enum: ["admin", "user", "staff"],
       default: "user",
     },
     createdAt: {
