@@ -15,6 +15,11 @@ const PORT = process.env.PORT || 3000;
 // Middleware to parse JSON
 app.use(express.json());
 
+//Routes
+const userRoutes = require("./routes/userRoutes");
+
+app.use("/api/user", userRoutes);
+
 // API route
 app.get('/api', (req, res) => {
     res.send({ message: 'Hello, World!' });

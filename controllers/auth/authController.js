@@ -25,7 +25,7 @@ const sendVerificationEmail = async (email, code) => {
 
 // Register a new user
 exports.registerUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     // Generate verification code
