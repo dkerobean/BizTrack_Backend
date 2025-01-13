@@ -19,8 +19,7 @@ app.use(express.json());
 app.use("/api/user", userRoutes);
 
 // API route
-app.get('/api', (req, res) => {
-    res.send({ message: 'Hello, World!' });
-});
 
-module.exports = app; 
+
+module.exports = app;
+

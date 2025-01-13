@@ -6,21 +6,28 @@ const jwt = require("jsonwebtoken");
 // Function to send verification email
 const sendVerificationEmail = async (email, code) => {
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SMTP_SECURE === 'true', // Ensure it's a boolean
     auth: {
-      user: "your-email@example.com",
-      pass: "your-email-password",
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
     },
   });
 
   const mailOptions = {
-    from: "your-email@example.com",
+    from: process.env.SMTP_USER, // Use SMTP_USER as the sender
     to: email,
     subject: "Email Verification",
     text: `Your verification code is: ${code}`,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    throw new Error("Failed to send verification email.");
+  }
 };
 
 // Register a new user
@@ -69,12 +76,14 @@ exports.verifyEmail = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
+
     if (user.verificationCode !== parseInt(code)) {
       return res.status(400).json({ message: "Invalid verification code." });
     }
 
     user.emailVerified = true;
-    user.verificationCode = null; // Clear verification code after use
+    user.verificationCode = null;
+
     await user.save();
 
     res.status(200).json({ message: "Email verified successfully." });
@@ -83,6 +92,7 @@ exports.verifyEmail = async (req, res) => {
   }
 };
 
+// User login
 // User login
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -98,8 +108,13 @@ exports.loginUser = async (req, res) => {
       return res.status(403).json({ message: "Email not verified." });
     }
 
-    // Compare the hashed password with the stored hash
+    console.log("Entered password:", password);  // Log the entered password
+    console.log("Stored hashed password:", user.password);  // Log the stored hash from the database
+
+    // Compare the entered password with the stored hash
     const isMatch = await bcrypt.compare(password, user.password);
+
+    console.log("Password match result:", isMatch);  // Log comparison result
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials." });

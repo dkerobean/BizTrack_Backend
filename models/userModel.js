@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
     },
     verificationCode: {
       type: Number,
-      required: true,
+      required: false,
     },
     role: {
       type: String,
