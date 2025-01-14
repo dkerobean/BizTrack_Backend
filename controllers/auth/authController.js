@@ -8,7 +8,7 @@ const sendVerificationEmail = async (email, code) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
-    secure: process.env.SMTP_SECURE === 'true', // Ensure it's a boolean
+    secure: process.env.SMTP_SECURE === 'true',
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -16,7 +16,7 @@ const sendVerificationEmail = async (email, code) => {
   });
 
   const mailOptions = {
-    from: process.env.SMTP_USER, // Use SMTP_USER as the sender
+    from: process.env.SMTP_USER,
     to: email,
     subject: "Email Verification",
     text: `Your verification code is: ${code}`,
@@ -38,13 +38,11 @@ exports.registerUser = async (req, res) => {
     // Generate verification code
     const verificationCode = Math.floor(10000 + Math.random() * 90000);
 
-    // Hash the password before saving it
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+    // Create new user - let the model handle password hashing
     const newUser = new User({
       name,
       email,
-      password: hashedPassword, // Store hashed password
+      password, // Pass the plain password - model middleware will hash it
       verificationCode,
     });
 
@@ -53,14 +51,19 @@ exports.registerUser = async (req, res) => {
     // Send verification email
     await sendVerificationEmail(email, verificationCode);
 
-    // Generate JWT token after registration
-    const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: newUser._id, role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     res.status(201).json({
       message: "User registered. Verification email sent.",
-      token, // Include the JWT token in the response
+      token,
     });
   } catch (error) {
+    console.error("Registration error:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -93,7 +96,6 @@ exports.verifyEmail = async (req, res) => {
 };
 
 // User login
-// User login
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -108,22 +110,22 @@ exports.loginUser = async (req, res) => {
       return res.status(403).json({ message: "Email not verified." });
     }
 
-    console.log("Entered password:", password);  // Log the entered password
-    console.log("Stored hashed password:", user.password);  // Log the stored hash from the database
-
-    // Compare the entered password with the stored hash
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    console.log("Password match result:", isMatch);  // Log comparison result
+    // Use the model's comparePassword method
+    const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials." });
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     res.status(200).json({ token, message: "Login successful." });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ error: error.message });
   }
 };
