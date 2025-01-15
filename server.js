@@ -1,5 +1,10 @@
 
-const app = require('./app');  // Import the app from app.js
+const app = require('./app');
+const cors = require('cors');
+
+// Enable CORS
+app.use(cors());
+
 
 // Use the port from the .env file or default to 3000
 const PORT = process.env.PORT || 3000;

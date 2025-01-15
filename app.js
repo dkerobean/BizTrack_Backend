@@ -18,6 +18,10 @@ app.use(express.json());
 // Routes
 app.use("/api/user", userRoutes);
 
+app.get('/api/test/', (req, res) => {
+    res.json({message: 'Connection successful! API is working.'});
+});
+
 // API route
 
 
