@@ -61,6 +61,7 @@ exports.registerUser = async (req, res) => {
     res.status(201).json({
       message: "User registered. Verification email sent.",
       token,
+      email: newUser.email
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -123,7 +124,11 @@ exports.loginUser = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({ token, message: "Login successful." });
+    res.status(200).json({
+      token,
+      email: user.email,
+      message: "Login successful."
+    });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: error.message });
