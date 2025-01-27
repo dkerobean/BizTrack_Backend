@@ -28,7 +28,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/user", userRoutes);
-app.use("/api", productsRoutes);
+app.use("/api", productRoutes);
 
 
 module.exports = app;
