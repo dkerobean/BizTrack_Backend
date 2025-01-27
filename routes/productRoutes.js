@@ -8,7 +8,7 @@ const { protect, authorize } = require("../middleware/authMiddleware");
 router.post("/product/create", protect, authorize("admin", "user"), createProduct);
 router.get("/products", getProducts); // Get all products
 router.get("/products/:id", getProductById); // Get a single product by ID
-router.put("/products/:id", updateProduct); // Update a product by ID
+router.put("/products/edit/:id", updateProduct); // Update a product by ID
 router.delete("/products/:id", deleteProduct); // Delete a product by ID
 
 module.exports = router;
