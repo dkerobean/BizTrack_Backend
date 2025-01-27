@@ -36,18 +36,10 @@ const productSchema = new mongoose.Schema(
       unique: true, // Stock Keeping Unit for tracking
       required: true,
     },
-    images: [
-      {
-        url: {
-          type: String,
-          trim: true,
-        },
-        altText: {
-          type: String,
-          trim: true,
-        },
-      },
-    ],
+    images: {
+      type: [String], // Array of strings for image URLs
+      default: [],
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Reference to the user who added the product

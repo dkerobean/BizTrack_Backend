@@ -48,6 +48,14 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.methods.generateAuthToken = function () {
+  return jwt.sign(
+    { id: this._id, role: this.role }, // Payload
+    process.env.JWT_SECRET, // Secret key
+    { expiresIn: process.env.JWT_EXPIRES_IN || "1d" } // Token expiry
+  );
+};
+
 // Password comparison method
 userSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
