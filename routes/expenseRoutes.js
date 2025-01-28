@@ -18,12 +18,12 @@ router.post('/', protect, authorize("admin", "user"), createExpense);
 router.get('/', protect, getAllExpenses);
 
 // Get a Single Expense
-router.get('/:id', getExpense);
+router.get('/:id', protect, getExpense);
 
 // Update an Expense
-router.put('/:id', updateExpense);
+router.put('/:id', protect, updateExpense);
 
 // Delete an Expense
-router.delete('/:id', deleteExpense);
+router.delete('/:id', protect, deleteExpense);
 
 module.exports = router;
