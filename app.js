@@ -9,15 +9,15 @@ const cors = require('cors');
 
 const app = express();
 
-// Load environment variables from .env file
+// Load environment variables
 dotenv.config();
 
 // Connect to the database
 connectDB();
 
-// CORS configuration (must come before routes)
+// CORS configuration
 app.use(cors({
-    origin: 'http://localhost:5173', // Your Vite frontend URL
+    origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -30,7 +30,7 @@ app.use(express.json());
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api", productRoutes);
-app.use("/api", expenseRoutes); 
+app.use("/api/expense", expenseRoutes);
 
 
 module.exports = app;
