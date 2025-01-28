@@ -12,10 +12,10 @@ const { protect, authorize } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 // Create an Expense
-router.post('/', protect, authorize("admin", "staff"),createExpense);
+router.post('/', protect, authorize("admin", "user"), createExpense);
 
 // Get All Expenses
-router.get('/', getAllExpenses);
+router.get('/', protect, getAllExpenses);
 
 // Get a Single Expense
 router.get('/:id', getExpense);

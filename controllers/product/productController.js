@@ -15,7 +15,7 @@ exports.createProduct = async (req, res) => {
       category,
       sku,
       images,
-      createdBy: req.user._id, // Assuming `req.user` contains the logged-in user
+      createdBy: req.user._id,
     });
 
     // Save the product to the database

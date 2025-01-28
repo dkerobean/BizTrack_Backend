@@ -33,6 +33,7 @@ exports.createExpense = async (req, res) => {
 
 // Get All Expenses
 exports.getAllExpenses = async (req, res) => {
+    console.log(req.user);
   try {
     const userId = req.user._id;
     const { startDate, endDate, category, isRecurring } = req.query;
