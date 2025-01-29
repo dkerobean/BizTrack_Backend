@@ -4,12 +4,20 @@ const {
   getAllExpenses,
   getExpense,
   updateExpense,
-  deleteExpense
+  deleteExpense,
+  getExpenseReport,
+  getExpenseTrends
 } = require('../controllers/expense/expenseController');
 
 const { protect, authorize } = require("../middleware/authMiddleware");
 
 const router = express.Router();
+
+// Get Expense Report
+router.get('/report', protect, getExpenseReport);
+
+// Get Expense Trend
+router.get("/trend", protect, getExpenseTrends);
 
 // Create an Expense
 router.post('/', protect, authorize("admin", "user"), createExpense);
@@ -25,5 +33,7 @@ router.put('/:id', protect, updateExpense);
 
 // Delete an Expense
 router.delete('/:id', protect, deleteExpense);
+
+
 
 module.exports = router;

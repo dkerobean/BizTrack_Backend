@@ -108,3 +108,79 @@ exports.deleteExpense = async (req, res) => {
     res.status(400).json({ success: false, error: error.message });
   }
 };
+
+// Expense Summary Reports
+
+exports.getExpenseReport = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Get total expenses
+    const totalExpenses = await Expense.aggregate([
+      { $match: { userId } },
+      { $group: { _id: null, totalAmount: { $sum: "$amount" } } }
+    ]);
+
+    // Get monthly expenses
+    const monthlyExpenses = await Expense.aggregate([
+      { $match: { userId } },
+      {
+        $group: {
+          _id: { year: { $year: "$date" }, month: { $month: "$date" } },
+          totalAmount: { $sum: "$amount" }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+
+    // Get category-wise spending
+    const categoryBreakdown = await Expense.aggregate([
+      { $match: { userId } },
+      {
+        $group: {
+          _id: "$category",
+          totalAmount: { $sum: "$amount" },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { totalAmount: -1 } }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      totalExpenses: totalExpenses[0]?.totalAmount || 0,
+      monthlyExpenses,
+      categoryBreakdown
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+
+// Trend Analysis
+
+exports.getExpenseTrends = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const trends = await Expense.aggregate([
+      { $match: { userId } },
+      {
+        $group: {
+          _id: { year: { $year: "$date" }, month: { $month: "$date" } },
+          totalAmount: { $sum: "$amount" },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      trends
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
