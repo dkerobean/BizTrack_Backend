@@ -9,6 +9,7 @@ exports.createExpense = async (req, res) => {
     } = req.body;
 
     const userId = req.user._id;
+    const organizationId = req.user.organizationId;
 
     const expense = new Expense({
       description,
@@ -19,6 +20,7 @@ exports.createExpense = async (req, res) => {
       notes,
       attachments,
       userId,
+      organizationId,
       isRecurring,
       recurrencePeriod,
       recurrenceEndDate
@@ -33,7 +35,6 @@ exports.createExpense = async (req, res) => {
 
 // Get All Expenses
 exports.getAllExpenses = async (req, res) => {
-    console.log(req.user);
   try {
     const userId = req.user._id;
     const { startDate, endDate, category, isRecurring } = req.query;

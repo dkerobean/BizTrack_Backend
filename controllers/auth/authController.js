@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../../models/userModel");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const Organization = require('../models/organizationModel');
 
 // Helper function to generate tokens
 const generateTokens = (userId, userRole) => {
@@ -58,6 +59,13 @@ exports.registerUser = async (req, res) => {
             password,
             verificationCode,
         });
+
+        // Create an organization
+        const organization = new Organization({ name: `${name}'s Organization`, createdBy: user._id, members: [user._id] });
+        await organization.save();
+
+        newUser.organizationId = organization._id; // Assign organization to user
+        newUser.role = "admin"; // First user is admin
 
         await newUser.save();
         await sendVerificationEmail(email, verificationCode);
