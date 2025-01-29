@@ -33,6 +33,11 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "user", "staff"],
       default: "user",
     },
+    organizationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
+      required: false,
+    },
     createdAt: {
       type: Date,
       default: Date.now,

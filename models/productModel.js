@@ -45,6 +45,11 @@ const productSchema = new mongoose.Schema(
       ref: "User", // Reference to the user who added the product
       required: true,
     },
+    organizationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
+      required: true
+    },
     isActive: {
       type: Boolean,
       default: true, // Indicates if the product is active or archived
