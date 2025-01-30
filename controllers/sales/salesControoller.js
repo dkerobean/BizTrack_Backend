@@ -27,7 +27,7 @@ exports.createSale = async (req, res) => {
 // Edit Sale
 exports.updateSale = async (req, res) => {
     try {
-        const sale = await Sale.findByIdAndUpdate(req.params.saleId, req.body, { new: true });
+        const sale = await Sale.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(sale);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -37,7 +37,7 @@ exports.updateSale = async (req, res) => {
 // Delete Sale
 exports.deleteSale = async (req, res) => {
     try {
-        await Sale.findByIdAndDelete(req.params.saleId);
+        await Sale.findByIdAndDelete(req.params.id);
         res.json({ message: "Sale deleted successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -65,7 +65,7 @@ exports.getSales = async (req, res) => {
 // Generate PDF Invoice
 exports.generateInvoice = async (req, res) => {
     try {
-        const sale = await Sale.findById(req.params.saleId).populate("items.productId customerId");
+        const sale = await Sale.findById(req.params.id).populate("items.productId customerId");
         if (!sale) return res.status(404).json({ message: "Sale not found" });
 
         const doc = new PDFDocument();
