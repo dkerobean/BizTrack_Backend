@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../../models/userModel");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
-const Organization = require('../models/organizationModel');
+const Organization = require('../../models/organizationModel');
 
 // Helper function to generate tokens
 const generateTokens = (userId, userRole) => {
