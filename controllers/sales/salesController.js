@@ -7,6 +7,7 @@ exports.createSale = async (req, res) => {
     try {
         const { customerId, items, paymentMethod, totalAmount } = req.body;
 
+
         // Reduce stock
         for (let item of items) {
             let product = await Product.findById(item.productId);
