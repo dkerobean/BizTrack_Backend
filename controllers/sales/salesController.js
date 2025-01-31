@@ -1,5 +1,5 @@
-const Sale = require("../models/Sale");
-const Product = require("../models/Product");
+const Sale = require("../../models/salesModel");
+const Product = require("../../models/ProductModel");
 const PDFDocument = require("pdfkit");
 
 // Create a Sale

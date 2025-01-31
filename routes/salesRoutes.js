@@ -6,7 +6,7 @@ const {
     deleteSale,
     getSales,
     generateInvoice
-    } = require("../controllers/salesController");
+    } = require("../controllers/sales/salesController");
 const { protect, authorize } = require("../middleware/authMiddleware");
 
 // create a new sale

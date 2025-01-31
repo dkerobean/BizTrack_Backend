@@ -5,7 +5,7 @@ const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const productRoutes = require('./routes/productRoutes');
-const saleRoutes = require('./routes/saleRoutes');
+const saleRoutes = require('./routes/salesRoutes');
 const cors = require('cors');
 
 const app = express();
