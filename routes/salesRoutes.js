@@ -7,6 +7,7 @@ const {
     getSales,
     generateInvoice
     } = require("../controllers/sales/salesController");
+
 const { protect, authorize } = require("../middleware/authMiddleware");
 
 // create a new sale
@@ -16,7 +17,7 @@ router.post("/", protect, createSale);
 router.put("/:id", protect, updateSale);
 
 // delete a sale
-router.delete("/:id", protect, adminOnly, deleteSale);
+router.delete("/:id", protect, authorize("admin"), deleteSale);
 
 // get sales
 router.get("/", protect, getSales);
