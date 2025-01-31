@@ -3,7 +3,21 @@ const Product = require('../../models/productModel');
 // Create a new product
 exports.createProduct = async (req, res) => {
   try {
-    const { name, description, price, stock, lowStockAlert, category, sku, images } = req.body;
+    const {
+      name,
+      description,
+      price,
+      stock,
+      lowStockAlert,
+      category,
+      sku,
+      images,
+      organizationId
+      } = req.body;
+
+      if (!organizationId) {
+      return res.status(400).json({ success: false, message: "organizationId is required" });
+    }
 
     // Create a new product instance
     const product = new Product({
@@ -15,6 +29,7 @@ exports.createProduct = async (req, res) => {
       category,
       sku,
       images,
+      organizationId,
       createdBy: req.user._id,
     });
 
