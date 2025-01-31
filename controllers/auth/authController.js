@@ -60,8 +60,15 @@ exports.registerUser = async (req, res) => {
             verificationCode,
         });
 
+
+
         // Create an organization
-        const organization = new Organization({ name: `${name}'s Organization`, createdBy: user._id, members: [user._id] });
+        const organization = new Organization({
+            name: `${name}'s Organization`,
+            createdBy: newUser._id,
+            members: [newUser._id]
+        });
+        
         await organization.save();
 
         newUser.organizationId = organization._id; // Assign organization to user

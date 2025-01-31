@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../../models/userModel');
+const Organization = require('../../models/organizationModel');
 
 exports.getUserData = async (req, res) => {
     try {
@@ -19,6 +20,7 @@ exports.getUserData = async (req, res) => {
             res.status(200).json({
                 name: user.name,
                 email: user.email,
+                organization: user.organizationId,
             });
         } catch (err) {
             if (err.name === 'TokenExpiredError') {
