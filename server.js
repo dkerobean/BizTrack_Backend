@@ -5,7 +5,6 @@ const cors = require('cors');
 // Enable CORS
 app.use(cors());
 
-
 // Use the port from the .env file or default to 3000
 const PORT = process.env.PORT || 3000;
 
