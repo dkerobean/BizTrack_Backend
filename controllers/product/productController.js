@@ -13,10 +13,14 @@ exports.createProduct = async (req, res) => {
       sku,
       images,
       organizationId
-      } = req.body;
+    } = req.body;
 
-      if (!organizationId) {
+    if (!organizationId) {
       return res.status(400).json({ success: false, message: "organizationId is required" });
+    }
+
+    if (organizationId !== req.user.organizationId.toString()) {
+      return res.status(403).json({ success: false, message: "Unauthorized to create product for this organization" });
     }
 
     // Create a new product instance
@@ -46,20 +50,20 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-// Get all products
+// Get all products belonging to the logged-in user's organization
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find(); // Fetch all products
+    const products = await Product.find({ organizationId: req.user.organizationId }); // Fetch products by organization
     res.status(200).json({ success: true, data: products });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Get a single product by ID
+// Get a single product by ID, ensuring it belongs to the logged-in user's organization
 exports.getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id); // Fetch product by ID
+    const product = await Product.findOne({ _id: req.params.id, organizationId: req.user.organizationId });
 
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found" });
@@ -71,16 +75,20 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-// Update a product by ID
+// Update a product by ID, ensuring it belongs to the logged-in user's organization
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
 
-    const product = await Product.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
+    const product = await Product.findOneAndUpdate(
+      { _id: id, organizationId: req.user.organizationId },
+      updates,
+      { new: true, runValidators: true }
+    );
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res.status(404).json({ success: false, message: "Product not found or unauthorized" });
     }
 
     res.status(200).json({
@@ -93,15 +101,15 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-// Delete a product by ID
+// Delete a product by ID, ensuring it belongs to the logged-in user's organization
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const product = await Product.findByIdAndDelete(id);
+    const product = await Product.findOneAndDelete({ _id: id, organizationId: req.user.organizationId });
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res.status(404).json({ success: false, message: "Product not found or unauthorized" });
     }
 
     res.status(200).json({
