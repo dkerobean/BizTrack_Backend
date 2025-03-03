@@ -68,7 +68,7 @@ exports.registerUser = async (req, res) => {
             createdBy: newUser._id,
             members: [newUser._id]
         });
-        
+
         await organization.save();
 
         newUser.organizationId = organization._id; // Assign organization to user
@@ -142,6 +142,7 @@ exports.loginUser = async (req, res) => {
             accessToken,
             refreshToken,
             email: user.email,
+            username: user.name,
             message: "Login successful."
         });
     } catch (error) {
