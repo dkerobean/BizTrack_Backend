@@ -9,10 +9,16 @@ const {
 } = require('../controllers/product/productController');
 
 const { protect, authorize } = require("../middleware/authMiddleware");
+const multer = require('multer');
+const upload = multer();
 
 
 // Product Routes
-router.post("/product/create", protect, authorize("admin", "user"), createProduct);
+router.post("/product/create",
+    upload.any(),
+    protect,
+    authorize("admin", "user"),
+    createProduct);
 router.get("/products", protect, authorize("admin", "user"), getProducts);
 router.get("/products/:id", getProductById);
 router.put("/products/edit/:id", updateProduct);
