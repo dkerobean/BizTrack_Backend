@@ -30,13 +30,13 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "user", "staff"],
+      enum: ["admin", "manager", "staff"],
       default: "user",
     },
     organizationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",
-      required: false,
+      required: true,
     },
     createdAt: {
       type: Date,

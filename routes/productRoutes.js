@@ -21,7 +21,7 @@ router.post("/product/create",
     createProduct);
 router.get("/products", protect, authorize("admin", "user"), getProducts);
 router.get("/products/:id", getProductById);
-router.put("/products/edit/:id", updateProduct);
+router.put("/products/edit/:id", authorize("admin", "user"), updateProduct);
 router.delete("/products/:id", deleteProduct);
 
 module.exports = router;

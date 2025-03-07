@@ -47,7 +47,6 @@ exports.createProduct = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
-    console.log(data);
   }
 };
 
@@ -80,25 +79,33 @@ exports.getProductById = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
 
+    // Ensure user has access
     const product = await Product.findOneAndUpdate(
-      { _id: id, organizationId: req.user.organizationId },
-      updates,
+      {
+        _id: id,
+        organizationId: req.user.organizationId
+      },
+      req.body,
       { new: true, runValidators: true }
     );
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found or unauthorized" });
+      return res.status(404).json({
+        success: false,
+        message: "Product not found or unauthorized"
+      });
     }
 
     res.status(200).json({
       success: true,
-      message: "Product updated successfully",
-      data: product,
+      data: product
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 

@@ -29,12 +29,13 @@ const protect = async (req, res, next) => {
       return res.status(401).json({
         success: false,
         message: "User no longer exists.",
-      }); 
+      });
     }
 
     // Attach user to request object
     req.user = user;
     next();
+
   } catch (error) {
     res.status(401).json({
       success: false,
