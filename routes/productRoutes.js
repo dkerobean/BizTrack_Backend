@@ -9,19 +9,41 @@ const {
 } = require('../controllers/product/productController');
 
 const { protect, authorize } = require("../middleware/authMiddleware");
-const multer = require('multer');
-const upload = multer();
+const upload = require('../middleware/fileupload');
+
 
 
 // Product Routes
-router.post("/product/create",
-    upload.any(),
+router.post("/products",
+  protect,
+  authorize("admin", "user"),
+  upload.array('images', 5),  // Changed from single('image') to array('images')
+  createProduct
+);
+
+router.put("/products/:id",
+  protect,
+  authorize("admin", "user"),
+  upload.array('images', 5),  // Changed from single('image') to array('images')
+  updateProduct
+);
+
+router.get("/products",
     protect,
     authorize("admin", "user"),
-    createProduct);
-router.get("/products", protect, authorize("admin", "user"), getProducts);
-router.get("/products/:id", getProductById);
-router.put("/products/edit/:id", authorize("admin", "user"), updateProduct);
-router.delete("/products/:id", deleteProduct);
+    getProducts
+);
+
+router.get("/products/:id",
+    protect,
+    authorize("admin", "user"),
+    getProductById
+);
+
+router.delete("/products/:id",
+    protect,
+    authorize("admin"),  // Only allow admins to delete
+    deleteProduct
+);
 
 module.exports = router;

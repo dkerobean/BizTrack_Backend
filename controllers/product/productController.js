@@ -1,6 +1,7 @@
 const Product = require('../../models/productModel');
 
 // Create a new product
+// Create a new product
 exports.createProduct = async (req, res) => {
   try {
     const {
@@ -11,7 +12,6 @@ exports.createProduct = async (req, res) => {
       lowStockAlert,
       category,
       sku,
-      images,
       organizationId
     } = req.body;
 
@@ -23,6 +23,14 @@ exports.createProduct = async (req, res) => {
       return res.status(403).json({ success: false, message: "Unauthorized to create product for this organization" });
     }
 
+    // Process uploaded images
+    const imageFiles = [];
+    if (req.files && req.files.length > 0) {
+      req.files.forEach(file => {
+        imageFiles.push(file.filename); // Store just the filename
+      });
+    }
+
     // Create a new product instance
     const product = new Product({
       name,
@@ -32,7 +40,7 @@ exports.createProduct = async (req, res) => {
       lowStockAlert,
       category,
       sku,
-      images,
+      images: imageFiles, // Use the array of filenames
       organizationId,
       createdBy: req.user._id,
     });
@@ -79,14 +87,20 @@ exports.getProductById = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    const updates = req.body;
 
-    // Ensure user has access
+    // Process uploaded images if any
+    if (req.files && req.files.length > 0) {
+      const imageFiles = req.files.map(file => file.filename);
+      updates.images = imageFiles;
+    }
+
     const product = await Product.findOneAndUpdate(
       {
         _id: id,
         organizationId: req.user.organizationId
       },
-      req.body,
+      updates,
       { new: true, runValidators: true }
     );
 
@@ -114,10 +128,16 @@ exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const product = await Product.findOneAndDelete({ _id: id, organizationId: req.user.organizationId });
+    const product = await Product.findOneAndDelete({
+      _id: id,
+      organizationId: req.user.organizationId
+    });
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found or unauthorized" });
+      return res.status(404).json({
+        success: false,
+        message: "Product not found or unauthorized"
+      });
     }
 
     res.status(200).json({
@@ -125,6 +145,9 @@ exports.deleteProduct = async (req, res) => {
       message: "Product deleted successfully",
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };

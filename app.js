@@ -7,6 +7,7 @@ const expenseRoutes = require('./routes/expenseRoutes');
 const productRoutes = require('./routes/productRoutes');
 const saleRoutes = require('./routes/salesRoutes');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use("/api/user", userRoutes);
 app.use("/api", productRoutes);
 app.use("/api/expense", expenseRoutes);
 app.use("/api/sale", saleRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 module.exports = app;
