@@ -31,6 +31,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    categories: {
+      type: [String], // Array of strings for multiple categories
+      default: [], // Default to an empty array
+    },
     sku: {
       type: String,
       unique: true, // Stock Keeping Unit for tracking
@@ -48,7 +52,7 @@ const productSchema = new mongoose.Schema(
     organizationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",
-      required: true
+      required: true,
     },
     isActive: {
       type: Boolean,
@@ -57,6 +61,14 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Pre-save hook to populate default categories if none are provided
+productSchema.pre("save", function (next) {
+  if (this.categories.length === 0) {
+    this.categories = ["Uncategorized"]; // Default category
+  }
+  next();
+});
 
 // Method to reduce stock after a sale
 productSchema.methods.reduceStock = function (quantity) {
